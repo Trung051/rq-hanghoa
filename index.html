@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tra cứu giá thu máy cũ</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="app-shell">
+<div class="tab-bar">
+  <button id="buybackTabBtn" class="tab-btn active" type="button">Tra giá thu máy cũ</button>
+  <button id="repairTabBtn" class="tab-btn" type="button">Tra giá sửa chữa</button>
+  <button id="requestsTabBtn" class="tab-btn" type="button">Đơn xin giá</button>
+</div>
+
+<section id="buybackPage" class="page">
+  <section class="hero-card">
+    <div class="hero-header">
+      <p class="eyebrow">102 Check Giá</p>
+      <h1>Tra cứu giá thu máy cũ</h1>
+      <p class="subtext"></p>
+    </div>
+
+    <div class="search-box">
+      <label for="searchInput" class="field-label">Tìm tên máy</label>
+      <div class="search-input-wrap">
+        <input id="searchInput" class="search-input" type="text" placeholder="Ví dụ: iPhone 13 Pro Max" autocomplete="off">
+        <button id="clearSearchBtn" class="clear-btn" type="button">×</button>
+      </div>
+      <div id="searchState" class="helper-text">Nhập tên máy để Check.</div>
+      <div id="suggestions" class="suggestions hidden"></div>
+    </div>
+  </section>
+
+  <section id="detailCard" class="detail-card hidden">
+    <div class="detail-header">
+      <div>
+        <p class="eyebrow">Chi tiết máy</p>
+        <h2 id="deviceTitle">-</h2>
+        <p id="deviceMeta" class="subtext">-</p>
+      </div>
+      <div class="price-badge">
+        <span>Giá cao nhất</span>
+        <strong id="basePriceText">0đ</strong>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="field-group field-group-full">
+        <button type="button" id="typeToggleBtn" class="collapse-toggle">
+          <span>Hình thức</span>
+          <span class="collapse-arrow" id="typeArrow">&#9660;</span>
+        </button>
+        <div id="typeCollapse" class="collapse-body">
+          <div class="form-grid" style="margin-top:0">
+            <div class="field-group">
+              <label class="field-label">Loại</label>
+              <div class="chip-group" id="typeGroup">
+                <button class="chip active" data-value="buy">Thu đứt</button>
+                <button class="chip" data-value="swap">Thu đổi</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Màu sắc</label>
+              <div class="chip-group" id="colorGroup">
+                <button class="chip active" data-value="dark">Tối</button>
+                <button class="chip" data-value="light">Sáng</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">BHMR</label>
+              <div class="chip-group" id="warrantyGroup">
+                <button class="chip active" data-value="no">Không</button>
+                <button class="chip" data-value="yes">Có</button>
+              </div>
+            </div>
+            <div class="field-group field-group-full">
+              <label class="field-label">Ngoại hình</label>
+              <div class="chip-group" id="bodyGroup">
+                <button class="chip active" data-value="99">99%</button>
+                <button class="chip" data-value="98">98%</button>
+                <button class="chip" data-value="95">95%</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Pin</label>
+              <div class="chip-group" id="pinGroup">
+                <button class="chip active" data-value="85">≥ 85%</button>
+                <button class="chip" data-value="lt85">&lt; 85%</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group field-group-full">
+        <button type="button" id="defectToggleBtn" class="collapse-toggle">
+          <span>Lỗi / tình trạng sửa chữa (tối đa 3)</span>
+          <span class="collapse-arrow" id="defectArrow">&#9660;</span>
+        </button>
+        <div id="defectCollapse" class="collapse-body">
+          <div id="defectList" class="defect-list"></div>
+          <div id="defectHint" class="helper-text">Chưa có dữ liệu lỗi cho model này.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="price-panel">
+      <p class="eyebrow">Giá thu cuối</p>
+      <div id="finalPriceText" class="final-price">0đ</div>
+      <div id="priceBreakdown" class="price-breakdown"></div>
+    </div>
+  </section>
+
+  <section id="emptyState" class="empty-state">
+    <div class="empty-card">
+      <h3>Chưa chọn model</h3>
+      <p>Nhập tên máy ở ô tìm kiếm để xem giá thu chi tiết.</p>
+    </div>
+  </section>
+</section>
+
+<section id="repairPage" class="page hidden">
+  <section class="hero-card">
+    <div class="hero-header">
+      <p class="eyebrow">102 Check Giá</p>
+      <h1>Tra cứu giá sửa chữa</h1>
+      <p class="subtext"></p>
+    </div>
+
+    <div class="search-box repair-search-box">
+      <label for="repairDeviceInput" class="field-label">Tìm tên máy</label>
+      <div class="search-input-wrap">
+        <input id="repairDeviceInput" class="search-input" type="text" placeholder="Ví dụ: iPhone 13 Pro Max" autocomplete="off">
+        <button id="clearRepairBtn" class="clear-btn" type="button">×</button>
+      </div>
+      <div id="repairSearchState" class="helper-text">Nhập tên máy để bắt đầu tra cứu sửa chữa.</div>
+      <div id="repairSuggestions" class="suggestions hidden"></div>
+    </div>
+  </section>
+
+  <section id="repairDeviceCard" class="detail-card hidden">
+    <div class="detail-header">
+      <div>
+        <p class="eyebrow">Model đã chọn</p>
+        <h2 id="repairDeviceTitle">-</h2>
+        <p id="repairDeviceMeta" class="subtext">-</p>
+      </div>
+      <div class="price-badge">
+        <span>Số hạng mục sửa</span>
+        <strong id="repairCountText">0</strong>
+      </div>
+    </div>
+
+    <div class="field-group field-group-full">
+      <label for="repairItemInput" class="field-label">Tìm sửa chữa</label>
+      <input id="repairItemInput" class="text-input" type="text" placeholder="Ví dụ: Face ID, màn hình, camera..." autocomplete="off" disabled>
+      <div id="repairItemState" class="helper-text">Chọn model để hiện danh sách sửa chữa.</div>
+    </div>
+
+    <div class="field-group field-group-full">
+      <button type="button" id="repairResultsToggleBtn" class="collapse-toggle">
+        <span>Danh sách hạng mục sửa chữa</span>
+        <span class="collapse-arrow" id="repairResultsArrow">&#9660;</span>
+      </button>
+      <div id="repairResultsCollapse" class="collapse-body">
+        <div id="repairResults" class="repair-results"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="repairSelectedCard" class="detail-card hidden">
+    <div class="detail-header">
+      <div>
+        <p class="eyebrow">Giá sửa chữa</p>
+        <h2 id="repairItemTitle">-</h2>
+        <p id="repairItemMeta" class="subtext">-</p>
+      </div>
+      <div class="price-badge">
+        <span>Giá sửa</span>
+        <strong id="repairPriceText">0đ</strong>
+      </div>
+    </div>
+  </section>
+
+  <section id="repairEmptyState" class="empty-state">
+    <div class="empty-card">
+      <h3>Chưa chọn model sửa chữa</h3>
+      <p>Nhập tên máy để tìm model, sau đó tìm hạng mục sửa chữa phù hợp.</p>
+    </div>
+  </section>
+</section>
+
+<section id="requestsPage" class="page hidden">
+  <section class="hero-card">
+    <div class="hero-header">
+      <p class="eyebrow">102 Check Giá</p>
+      <h1>Đơn xin giá</h1>
+      <p class="subtext">Danh sách yêu cầu xin giá từ sheet Lịch sử phiếu.</p>
+    </div>
+
+    <div class="request-filters" style="margin-top:16px">
+      <div class="request-filter-group">
+        <span class="field-label">Trạng thái</span>
+        <div id="requestStatusFilters" class="request-filter-chips">
+          <button type="button" class="chip" data-status="all">Tất cả</button>
+          <button type="button" class="chip active" data-status="pending">Chưa có giá</button>
+          <button type="button" class="chip" data-status="priced">Đã có giá</button>
+        </div>
+      </div>
+      <div class="request-filter-group">
+        <label for="requestPeriodFilter" class="field-label">Thời gian</label>
+        <select id="requestPeriodFilter" class="select-input">
+          <option value="today">Hôm nay</option>
+          <option value="yesterday">Hôm qua</option>
+          <option value="3days">3 ngày qua</option>
+          <option value="week">1 tuần</option>
+          <option value="month">1 tháng</option>
+          <option value="all">Tất cả</option>
+        </select>
+      </div>
+      <div id="requestFilterState" class="helper-text request-filter-state">Đang chờ tải danh sách phiếu.</div>
+    </div>
+  </section>
+
+  <section id="requestsList" class="request-list"></section>
+
+  <section id="requestsEmptyState" class="empty-state">
+    <div class="empty-card">
+      <h3>Chưa có phiếu phù hợp</h3>
+      <p>Thử đổi trạng thái hoặc khoảng thời gian để xem các phiếu khác.</p>
+    </div>
+  </section>
+</section>
+</main>
+
+<button id="chatBubbleBtn" class="chat-bubble" type="button" aria-label="Mở xin giá thu">
+  <span class="chat-bubble-icon">💬</span>
+  <span id="chatBubbleText" class="chat-bubble-text">Xin giá thu</span>
+</button>
+
+<div id="chatPanel" class="chat-panel hidden">
+  <div class="chat-panel-header">
+    <div class="chat-tabs">
+      <button id="chatBuybackTab" class="chat-tab active" type="button">Xin giá thu</button>
+      <button id="chatRepairTab" class="chat-tab" type="button">Xin giá sửa chữa</button>
+    </div>
+    <button id="closeChatPanelBtn" class="icon-btn chat-close-btn" type="button">×</button>
+  </div>
+
+  <div class="chat-panel-body">
+    <form id="chatFormBuyback" class="chat-form">
+      <div id="chatBuybackSummary" class="chat-summary-title hidden"></div>
+      <div class="field-group">
+        <label class="field-label" for="chatDeviceName">Tên máy</label>
+        <input id="chatDeviceName" class="text-input" type="text" maxlength="200" placeholder="Nhập tên máy">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="chatStorage">Dung lượng</label>
+        <input id="chatStorage" class="text-input" type="text" maxlength="50" placeholder="Ví dụ: 256GB">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="chatBodyCondition">Ngoại hình</label>
+        <input id="chatBodyCondition" class="text-input" type="text" maxlength="20" placeholder="Ví dụ: 99%">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="chatPinStatus">Pin</label>
+        <input id="chatPinStatus" class="text-input" type="text" maxlength="20" placeholder="Ví dụ: ≥ 85%">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="marketInput">Thị trường</label>
+        <input id="marketInput" class="text-input" type="text" maxlength="100" placeholder="Ví dụ: VN/A, LL/A">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="accessoriesInput">Phụ kiện</label>
+        <input id="accessoriesInput" class="text-input" type="text" maxlength="200" placeholder="Ví dụ: máy trần, cáp, hộp">
+      </div>
+      <div class="field-group field-group-full">
+        <label class="field-label" for="conditionInput">Tình trạng cụ thể</label>
+        <textarea id="conditionInput" class="text-area" rows="3" maxlength="500" placeholder="Mô tả thêm tình trạng, sửa chữa, thay thế..."></textarea>
+      </div>
+      <div id="chatMessage" class="helper-text"></div>
+      <div class="chat-actions">
+        <button type="submit" class="primary-btn">Gửi yêu cầu</button>
+      </div>
+    </form>
+
+    <form id="chatFormRepair" class="chat-form hidden">
+      <div class="field-group">
+        <label class="field-label" for="chatRepairDeviceName">Tên máy</label>
+        <input id="chatRepairDeviceName" class="text-input" type="text" maxlength="200" placeholder="Nhập tên máy">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="chatRepairStorage">Dung lượng</label>
+        <input id="chatRepairStorage" class="text-input" type="text" maxlength="50" placeholder="Ví dụ: 256GB">
+      </div>
+      <div class="field-group field-group-full">
+        <label class="field-label" for="chatRepairDefects">Lỗi / hạng mục sửa</label>
+        <input id="chatRepairDefects" class="text-input" type="text" maxlength="500" placeholder="Ví dụ: Màn hình, Face ID, Pin...">
+      </div>
+      <div class="field-group field-group-full">
+        <label class="field-label" for="chatRepairNote">Mô tả thêm</label>
+        <textarea id="chatRepairNote" class="text-area" rows="3" maxlength="500" placeholder="Mô tả tình trạng lỗi cụ thể..."></textarea>
+      </div>
+      <div id="chatRepairMessage" class="helper-text"></div>
+      <div class="chat-actions">
+        <button type="submit" class="primary-btn">Gửi yêu cầu sửa chữa</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="spinner-card">
+    <div class="spinner"></div>
+    <p>Đang tải dữ liệu...</p>
+  </div>
+</div>
+<div id="priceModal" class="modal hidden">
+  <div id="priceModalBackdrop" class="modal-backdrop"></div>
+  <div class="modal-content request-modal-content">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">Điền giá</p>
+        <h3 id="priceModalTitle">Đơn xin giá</h3>
+      </div>
+      <button id="closePriceModalBtn" class="icon-btn" type="button">×</button>
+    </div>
+
+    <div id="priceModalInfo" class="request-modal-info"></div>
+
+    <form id="priceForm" class="modal-form">
+      <div class="field-group field-group-full">
+        <label class="field-label" for="priceInput">Giá thu</label>
+        <input id="priceInput" class="text-input" type="number" min="0" step="1000" placeholder="Ví dụ: 5000000">
+        <div id="priceFormMessage" class="helper-text"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="cancelPriceModalBtn" type="button" class="secondary-btn">Hủy</button>
+        <button type="submit" class="primary-btn">Lưu giá</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+window.APP_CONFIG = {
+API_BASE_URL: 'https://script.google.com/macros/s/AKfycbydAa3Bx4w-nRCutklIZXmCv2676-ChpbK9vigpCZEPnNz0Umfj8NI5BigeezKL5IsB/exec'
+};
+</script>
+<script src="./script.js"></script>
+</body>
+</html>
