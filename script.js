@@ -375,6 +375,17 @@ function handleSearchInput(tab) {
   }
 
   if (state[timerKey]) clearTimeout(state[timerKey]);
+  if (tab === 'buyback' && state.searchIndexReady && state.searchIndex.length > 0) {
+    const arr = filterLocalIndex(query);
+    if (arr.length) {
+      renderSuggestions(arr);
+      els.searchState.textContent = `Tìm thấy ${arr.length} gợi ý.`;
+    } else {
+      hideSuggestions();
+      els.searchState.textContent = 'Không tìm thấy model phù hợp.';
+    }
+    return;
+  }
   state[timerKey] = setTimeout(() => doSearch(query, tab), 80);
 }
 
