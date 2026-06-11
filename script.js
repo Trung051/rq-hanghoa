@@ -449,6 +449,7 @@ function filterLocalIndex(query) {
     supportPrice: item.supportPrice,
     warrantyPrice: item.warrantyPrice,
     priceSale: item.priceSale,
+    priceSale95: item.priceSale95,
   }));
 }
 
@@ -497,6 +498,7 @@ async function selectBuybackDevice(item) {
     supportPrice: Number(item.supportPrice || 0),
     warrantyPrice: Number(item.warrantyPrice || 0),
     priceSale: Number(item.priceSale || 0),
+    priceSale95: Number(item.priceSale95 || 0),
     pinPrice: Number(item.pinPrice || 0),
     defects: cachedDetail ? (cachedDetail.defects || []) : [],
   };
@@ -629,38 +631,39 @@ function updatePrice() {
   if (!state.detail) return;
   const breakdown = [];
   let total = Number(state.detail.priceBuy || 0);
-  breakdown.push(`Giá cơ bản: ${formatVnd(total)}`);
-  if (state.type === 'swap') {
-    total += Number(state.detail.supportPrice || 0);
-    breakdown.push(`+ Trợ giá thu đổi: ${formatVnd(state.detail.supportPrice || 0)}`);
-  }
-  if (state.color === 'light') {
-    total += 400000;
-    breakdown.push(`+ Màu sáng: ${formatVnd(400000)}`);
-  }
-  if (state.warranty === 'yes') {
-    total += Number(state.detail.warrantyPrice || 0);
-    breakdown.push(`+ BHMR: ${formatVnd(state.detail.warrantyPrice || 0)}`);
-  }
+
   if (state.bodyCondition === '98') {
     const deduction98 = Number(state.detail.priceSale || 0);
     total -= deduction98;
-    breakdown.push(`- Ngoại hình 98%: ${formatVnd(deduction98)}`);
+    breakdown.push(`- Ngoại hình 98%: -${formatVnd(deduction98)}`);
   } else if (state.bodyCondition === '95') {
-    const deduction98 = Number(state.detail.priceSale || 0);
-    const deduction95 = deduction98 * 2;
+    const sale95 = Number(state.detail.priceSale95 || 0);
+    const deduction95 = Number(state.detail.priceSale || 0) - sale95;
     total -= deduction95;
-    breakdown.push(`- Ngoại hình 95%: ${formatVnd(deduction95)}`);
+    breakdown.push(`- Ngoại hình 95%: -${formatVnd(deduction95)}`);
+  }
+
+  if (state.type === 'swap') {
+    total += Number(state.detail.supportPrice || 0);
+    breakdown.push(`+ Trợ giá thu đổi: +${formatVnd(state.detail.supportPrice || 0)}`);
+  }
+  if (state.color === 'light') {
+    total += 400000;
+    breakdown.push(`+ Màu sáng: +${formatVnd(400000)}`);
+  }
+  if (state.warranty === 'yes') {
+    total += Number(state.detail.warrantyPrice || 0);
+    breakdown.push(`+ BHMR: +${formatVnd(state.detail.warrantyPrice || 0)}`);
   }
   if (state.pinStatus === 'lt85') {
     const pinDeduction = Number(state.detail.pinPrice || 0);
     total -= pinDeduction;
-    breakdown.push(`- Pin < 85%: ${formatVnd(pinDeduction)}`);
+    breakdown.push(`- Pin < 85%: -${formatVnd(pinDeduction)}`);
   }
   if (state.selectedDefects.length) {
     state.selectedDefects.forEach((defect) => {
       total -= Number(defect.price || 0);
-      breakdown.push(`- ${defect.name}: ${formatVnd(defect.price || 0)}`);
+      breakdown.push(`- ${defect.name}: -${formatVnd(defect.price || 0)}`);
     });
   }
   total = Math.max(0, Math.round(total / 1000) * 1000);
@@ -753,6 +756,7 @@ async function repairSelectDevice(item) {
       supportPrice: Number(detail.supportPrice || item.supportPrice || 0),
       warrantyPrice: Number(detail.warrantyPrice || item.warrantyPrice || 0),
       priceSale: Number(detail.priceSale || item.priceSale || 0),
+      priceSale95: Number(detail.priceSale95 || item.priceSale95 || 0),
       pinPrice: Number(detail.pinPrice || 0),
       defects,
     };
@@ -938,6 +942,7 @@ async function submitBuybackRequest(event) {
       supportPrice: Number(state.detail ? state.detail.supportPrice || 0 : 0),
       warrantyPrice: Number(state.detail ? state.detail.warrantyPrice || 0 : 0),
       priceSale: Number(state.detail ? state.detail.priceSale || 0 : 0),
+      priceSale95: Number(state.detail ? state.detail.priceSale95 || 0 : 0),
       selectedDefects: state.selectedDefects.map(d => ({ name: sanitizeText(d.name), price: Number(d.price || 0) })),
     };
     const res = await fetch(API_BASE, {
