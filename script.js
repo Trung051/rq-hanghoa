@@ -638,8 +638,7 @@ function updatePrice() {
     total -= deduction98;
     breakdown.push(`- Ngoại hình 98%: -${formatVnd(deduction98)}`);
   } else if (state.bodyCondition === '95') {
-    const sale95 = Number(state.detail.priceSale95 || 0);
-    const deduction95 = Number(state.detail.priceSale || 0) - sale95;
+    const deduction95 = Number(state.detail.priceSale95 || 0);
     total -= deduction95;
     breakdown.push(`- Ngoại hình 95%: -${formatVnd(deduction95)}`);
   }
