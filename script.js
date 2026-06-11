@@ -527,6 +527,7 @@ async function selectBuybackDevice(item) {
       supportPrice: Number(detail.supportPrice || item.supportPrice || 0),
       warrantyPrice: Number(detail.warrantyPrice || item.warrantyPrice || 0),
       priceSale: Number(detail.priceSale || item.priceSale || 0),
+      priceSale95: Number(detail.priceSale95 || item.priceSale95 || 0),
       pinPrice: Number(detail.pinPrice || 0),
       defects: detail.defectList || [],
     };
